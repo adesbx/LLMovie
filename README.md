@@ -23,6 +23,8 @@ Ce dataset contient :
 - 86,000 films 
 - 330,975 utilisateurs.
 
+Les derniers ajouts dans ce dataset date du 09/2018. Les films les plus récents datent de 2024. 
+
 Exemple :  
 Télécharge le fichier `ml-latest-small.zip` (ou `ml-latest.zip` pour la version complète).
 
