@@ -9,10 +9,13 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
+from factors import Factor
+
 df_path_movie = "./dataset/movies.csv"
 df_path_rates = "./dataset/ratings.csv"
 letterbox_path = "./dataset/letterboxd-chewbou-2025-10-16-13-11-utc.zip"
 
+factor = Factor() 
 
 def extract_ratings(csv_file: str) -> list[dict]: 
     df = pd.read_csv(csv_file)
@@ -106,57 +109,57 @@ def upload_data(file):
 
     return rates, likes
 
-def caculate_factors(): # TODO: faire une classe qui calcule tout
-    df = pd.read_csv(df_path_rates)
-    #init
-    users, users_id = np.unique(df["userId"], return_inverse=True)
-    movies, movies_id = np.unique(df["movieId"], return_inverse=True)
-    df['u'] = users_id
-    df['m'] = movies_id
+# def caculate_factors(): # TODO: faire une classe qui calcule tout
+#     df = pd.read_csv(df_path_rates)
+#     #init
+#     users, users_id = np.unique(df["userId"], return_inverse=True)
+#     movies, movies_id = np.unique(df["movieId"], return_inverse=True)
+#     df['u'] = users_id
+#     df['m'] = movies_id
 
-    n_users = len(users)
-    n_movies = len(movies)
+#     n_users = len(users)
+#     n_movies = len(movies)
 
-    train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
+#     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
 
-    r_train = train_df["rating"].values
-    u_train = train_df["u"].values
-    m_train = train_df["m"].values
+#     r_train = train_df["rating"].values
+#     u_train = train_df["u"].values
+#     m_train = train_df["m"].values
 
-    mu = r_train.mean()
-    lambda_reg = 10.0
+#     mu = r_train.mean()
+#     lambda_reg = 10.0
 
-    #calcul pour film
-    item_sum = np.zeros(n_movies)
-    item_count = np.zeros(n_movies)
+#     #calcul pour film
+#     item_sum = np.zeros(n_movies)
+#     item_count = np.zeros(n_movies)
 
-    for mi, ri in zip(m_train, r_train):
-        item_sum[mi] += ri
-        item_count[mi] += 1
-    item_bias = np.zeros(len(item_count))
-    mask = item_count > 0
-    item_bias[mask] = (item_sum[mask] - item_count[mask] * mu) / (item_count[mask] + lambda_reg)
+#     for mi, ri in zip(m_train, r_train):
+#         item_sum[mi] += ri
+#         item_count[mi] += 1
+#     item_bias = np.zeros(len(item_count))
+#     mask = item_count > 0
+#     item_bias[mask] = (item_sum[mask] - item_count[mask] * mu) / (item_count[mask] + lambda_reg)
 
-    #calcul pour user
-    user_sum = np.zeros(n_users)
-    user_count = np.zeros(n_users)
+#     #calcul pour user
+#     user_sum = np.zeros(n_users)
+#     user_count = np.zeros(n_users)
 
-    for ui, mi, ri in zip(u_train, m_train, r_train):
-        user_sum[ui] += (ri - mu - item_bias[mi])
-        user_count[ui] += 1
-    user_bias = np.zeros(len(user_count))
-    mask_u = user_count > 0
-    user_bias[mask_u] = user_sum[mask_u] / (user_count[mask_u] + lambda_reg)
+#     for ui, mi, ri in zip(u_train, m_train, r_train):
+#         user_sum[ui] += (ri - mu - item_bias[mi])
+#         user_count[ui] += 1
+#     user_bias = np.zeros(len(user_count))
+#     mask_u = user_count > 0
+#     user_bias[mask_u] = user_sum[mask_u] / (user_count[mask_u] + lambda_reg)
 
-    residuals = r_train - (mu - user_bias[u_train] + item_bias[m_train])
-    R_resid = csr_matrix((residuals, (u_train, m_train)), shape=(n_users, n_movies))
+#     residuals = r_train - (mu - user_bias[u_train] + item_bias[m_train])
+#     R_resid = csr_matrix((residuals, (u_train, m_train)), shape=(n_users, n_movies))
 
-    k = 50 
-    svd = TruncatedSVD(n_components=k, n_iter=7, random_state=42)
-    user_factors = svd.fit_transform(R_resid)  
-    item_factors = svd.components_.T  
+#     k = 50 
+#     svd = TruncatedSVD(n_components=k, n_iter=7, random_state=42)
+#     user_factors = svd.fit_transform(R_resid)  
+#     item_factors = svd.components_.T  
 
-    return svd, user_factors, item_factors, users, movies, mu, user_bias, item_bias
+#     return svd, user_factors, item_factors, users, movies, mu, user_bias, item_bias
 
 def predict_scores_for_user(user_idx, mu, user_bias, item_bias, user_factors, item_factors):
     baseline_u = mu + user_bias[user_idx] + item_bias  
@@ -261,16 +264,16 @@ def choose_method(fun: str, question: str):
     print(fun)
     fun = fun.strip()
     split = fun.split(",")
-    fun = split[0]
-    movie_name = split[1].strip()
+    if len(split) > 1:         
+        fun = split[0]
+        movie_name = split[1].strip()
     match fun:
         case "recommend_by_user": 
             # print("recommand by user")
-            svd, user_factors, item_factors, users, movies, mu, user_bias, item_bias = caculate_factors()
             rates, likes = upload_data(letterbox_path)
 
             user, _ = find_all(rates) # TODO revoir les films non pris en compte
-            l = recommend_new_user(user, svd, mu, movies, item_bias, item_factors, len(movies), 3)
+            l = recommend_new_user(user, factor.svd, factor.mu, factor.movies, factor.item_bias, factor.item_factors, len(factor.movies), 3)
 
             l_recommend = []
             for id, _ in l:
@@ -279,12 +282,11 @@ def choose_method(fun: str, question: str):
                 
             to_return = l_recommend
         case "recommend_by_movie": 
-            _, _, _, _, movies, _, _, _ = caculate_factors()
             # print(movie_name)
             id_movie = find_only_by_title(movie_name)
             print(id_movie)
             if id_movie != 0:
-                l = recommend_similar_movie(id_movie, movies)
+                l = recommend_similar_movie(id_movie, factor.movies)
                 l = l['movieId']
                 l_recommend = []
                 for id in l:

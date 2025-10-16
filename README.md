@@ -16,7 +16,7 @@ Le but est de pouvoir recommander des films :
 
 ### 1️⃣ Télécharger le dataset MovieLens
 
-Ce projet s’appuie sur le jeu de données [**MovieLens**](https://grouplens.org/datasets/movielens/latest/) .  
+Ce projet s’appuie sur le jeu de données [**MovieLens**](https://grouplens.org/datasets/movielens/latest/).  
 
 Ce dataset contient :
 - 33,000,000 notes d'utilisateurs 
