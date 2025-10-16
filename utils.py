@@ -11,7 +11,7 @@ from sklearn.metrics import mean_squared_error
 
 df_path_movie = "./dataset/movies.csv"
 df_path_rates = "./dataset/ratings.csv"
-letterbox_zip_path = "./dataset/letterboxd-chewbou-2025-10-16-13-11-utc.zip"
+letterbox_path = "./dataset/letterboxd-chewbou-2025-10-16-13-11-utc.zip"
 
 
 def extract_ratings(csv_file: str) -> list[dict]: 
@@ -69,7 +69,7 @@ def find_by_title(title: str, year: int, df: pd.DataFrame):
    #    print(title + " found in " + TEMP)      
    return best_id
 
-def find_only_by_title(title: str): # ne retourne pas forcément le bon
+def find_only_by_title(title: str): # TODO ne retourne pas forcément le bon
     df = pd.read_csv(df_path_movie)
     df["clean_title"] = df["title"].str.replace(r"\s*\(\d{4}\)$", "", regex=True)
     best_id = 0
@@ -269,7 +269,7 @@ def choose_method(fun: str, question: str):
             svd, user_factors, item_factors, users, movies, mu, user_bias, item_bias = caculate_factors()
             rates, likes = upload_data(letterbox_path)
 
-            user, _ = find_all(rates) # revoir les nons pris en compte
+            user, _ = find_all(rates) # TODO revoir les films non pris en compte
             l = recommend_new_user(user, svd, mu, movies, item_bias, item_factors, len(movies), 3)
 
             l_recommend = []
