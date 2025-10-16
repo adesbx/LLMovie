@@ -68,11 +68,12 @@ Les calculs et les recommandations sont faits directement sur ton ordinateur, à
 ### 🧩 Pipeline générale
 
 TODO
+
 ---
 
 ## 🧮 Méthodes de recommandation
 
-Le système utilise deux approches complémentaires :
+Le système utilise trois approches complémentaires :
 
 ### 1️⃣ Recommandation basée sur un utilisateur
 
