@@ -79,7 +79,24 @@ Le système utilise trois approches complémentaires :
 
 ### 1️⃣ Recommandation basée sur un utilisateur
 
-TODO
+Tout d'abord on cherche a calculer le bias utilisateurs et le biais films
+
+Film:
+$$
+b_i = \frac{\sum_{u \in U_i} (r_{ui} - \mu)}{|U_i| + \lambda} 
+$$
+
+Utilisateur:
+$$
+b_u = \frac{\sum_{i \in I_u} (r_{ui} - \mu - b_i)}{|I_u| + \lambda} 
+$$
+
+
+
+$$
+r_{ui} \approx \mu + b_u + b_i
+$$
+
 
 ---
 
