@@ -65,7 +65,14 @@ Ainsi Le projet peut ainsi utiliser ton propre historique de films pour produire
 
 Ce projet s’exécute **entièrement en local** :  
 Aucune requête externe n’est envoyée.  
-Les calculs et les recommandations sont faits directement sur ton ordinateur, à partir des fichiers CSV présents dans `dataset/`.
+Les calculs et les recommandations sont faits directement sur l'ordinateur, à partir des fichiers CSV présents dans `dataset/`.
+
+Il sera cependant nécessaire d'avoir Ollama d'installer sur ton ordinateur avec le modèle suivant :
+- gemma:7b
+
+```bash
+ollama pull gemma:7b
+```
 
 ### 🧩 Pipeline générale
 
@@ -79,19 +86,37 @@ Le système utilise trois approches complémentaires :
 
 ### 1️⃣ Recommandation basée sur un utilisateur
 
-Tout d'abord on cherche a calculer le bias utilisateurs et le biais films
+Tout d'abord on cherche a calculer le bias utilisateurs et le biais des films
 
-Film:
+Biais film:
 $$
 b_i = \frac{\sum_{u \in U_i} (r_{ui} - \mu)}{|U_i| + \lambda} 
 $$
 
-Utilisateur:
+Biais utilisateur:
 $$
 b_u = \frac{\sum_{i \in I_u} (r_{ui} - \mu - b_i)}{|I_u| + \lambda} 
 $$
 
+avec:
 
+$$
+r_{ui} : la\ note\ donnée\ par\ l’utilisateur\ u\ au\ film\ i
+$$
+$$
+\mu : moyenne\ globale\  de\ toute\ les\ notes
+$$
+$$
+U_i: ensemble\ des\ utilisateurs\ ayant\ noté\ le\ film\ i
+$$
+$$
+I_u : ensemble\ des\ films\ notés\ par\ l’utilisateur\ u 
+$$
+$$
+\lambda : terme\ de\ régulation
+$$
+
+Par la suite on calcule le residuals
 
 $$
 r_{ui} \approx \mu + b_u + b_i
@@ -114,4 +139,8 @@ Pour cette recommandation on demande seulement au LLM de nous recommander un fil
 
 ## 🚀 Exécution
 
-TODO
+Pour lancer le programme il suffit de faire la commande suivante :
+
+```bash
+python main.py
+```
