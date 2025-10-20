@@ -89,11 +89,13 @@ Le système utilise trois approches complémentaires :
 Tout d'abord on cherche a calculer le bias utilisateurs et le biais des films
 
 Biais film:
+
 $$
 b_i = \frac{\sum_{u \in U_i} (r_{ui} - \mu)}{|U_i| + \lambda} 
 $$
 
 Biais utilisateur:
+
 $$
 b_u = \frac{\sum_{i \in I_u} (r_{ui} - \mu - b_i)}{|I_u| + \lambda} 
 $$
