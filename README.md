@@ -86,7 +86,7 @@ Le système utilise trois approches complémentaires :
 
 ### 1️⃣ Recommandation basée sur un utilisateur
 
-Tout d'abord on cherche a calculer le bias utilisateurs et le biais des films
+Tout d'abord on cherche à calculer le bias utilisateurs et le biais des films
 
 Biais film:
 
@@ -115,15 +115,30 @@ $$
 I_u : ensemble\ des\ films\ notés\ par\ l’utilisateur\ u 
 $$
 $$
-\lambda : terme\ de\ régulation
+\lambda : terme\ de\ régularisation
 $$
 
 Par la suite on calcule le residuals
 
 $$
-r_{ui} \approx \mu + b_u + b_i
+r'_{ui} = r_{ui} - (\mu + b_u + b_i)
 $$
 
+avec:
+$$
+r_{ui} : la\ note\ donnée\ par\ l’utilisateur\ u\ au\ film\ i
+$$
+$$
+\mu : moyenne\ globale\  de\ toutes\ les\ notes
+$$
+$$
+b_u : biais\ utilisateur
+$$
+$$
+b_i : biais\ film
+$$
+
+Cette formule permet de mettre à jour la note en prenant en compte le biais précédemment calculé.
 
 ---
 
