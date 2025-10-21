@@ -12,6 +12,12 @@ Le but est de pouvoir recommander des films :
 
 ---
 
+⚠️ Cette version est seulement une V1, des améliorations possibles pourrait notamment être:
+- Rendre la pipeline plus rapide
+- Ajouter un système de RAG pour accéler également le processus
+
+---
+
 ## 📦 Installation des données
 
 ### 1️⃣ Télécharger le dataset MovieLens
@@ -76,7 +82,19 @@ ollama pull gemma:7b
 
 ### 🧩 Pipeline générale
 
-TODO
+```mermaid
+flowchart TD
+    A[L'utilisateur tape son message] --> |Envoi du message au routeur| B[Routeur]
+    B --> |Le routeur analyse la demande et renvoie le mot correspondant à la fonction à appeler| C[Réponse du routeur]
+    C --> D{Fonction de traitement}
+    D --> E[Recommandation à partir des notes de l'utilisateur]
+    D --> F[Recommandation à partir d'un autre film]
+    D --> G[Recommandation aléatoire]
+    E --> |Noms des films| H
+    F --> |Noms des films| H
+    G --> |Noms des films| H
+    H[LLM permettant de générer la réponse finale]
+```
 
 ---
 
@@ -141,13 +159,39 @@ $$
 
 Cette formule permet de mettre à jour la note en prenant en compte le biais précédemment calculé.
 
-Par la suite, on construit une matrice avec les utilisateurs et les films. Plus précisement on utilise TruncatedSVD. On pourra utiliser les vecteurs latents pour prédire la note d'un film.
+Par la suite, on construit une matrice avec les utilisateurs et les films. Plus précisément, on utilise TruncatedSVD. On pourra utiliser les vecteurs latents pour prédire la note d’un film. 
+
+$$
+\hat{r}_{ui} = \mu + b_u + b_i + \mathbf{u}_i \cdot \mathbf{v}_j
+$$
+
+avec:
+
+$$
+\mathbf{u}_{i} : vecteur\ latent\ utilisateur
+$$
+$$
+\mathbf{v}_{j} : vecteur\ latent\ film
+$$
+
+
+Il ne restera plus qu’à utiliser cette prédiction pour ressortir les k films avec la meilleure note prédite.
 
 ---
 
 ### 2️⃣ Recommandation basée sur un film (item-item)
 
-TODO
+On gardera seulement les films avec une note supérieure a 4,0.
+
+Pour chaque film, on calcule combien d'utilisateurs ont noté ce film et quelle est la note moyenne parmi eux.
+
+Ensuite on calcule simplement la moyenne pondérée:
+
+$$
+score_i = mean\_rating_i \times \frac{count_i}{\max_j(count_j)}
+$$
+
+Il ne restera plus qu’à ressortir les k films avec la meilleure moyenne.
 
 ---
 
