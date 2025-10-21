@@ -188,7 +188,7 @@ Pour chaque film, on calcule combien d'utilisateurs ont noté ce film et quelle 
 Ensuite on calcule simplement la moyenne pondérée:
 
 $$
-score_i = mean\_rating_i \times \frac{count_i}{\max_j(count_j)}
+score_i = mean\ rating_i \times \frac{count_i}{\max_j(count_j)}
 $$
 
 Il ne restera plus qu’à ressortir les k films avec la meilleure moyenne.
