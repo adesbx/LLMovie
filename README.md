@@ -125,6 +125,7 @@ r'_{ui} = r_{ui} - (\mu + b_u + b_i)
 $$
 
 avec:
+
 $$
 r_{ui} : la\ note\ donnée\ par\ l’utilisateur\ u\ au\ film\ i
 $$
@@ -139,6 +140,8 @@ b_i : biais\ film
 $$
 
 Cette formule permet de mettre à jour la note en prenant en compte le biais précédemment calculé.
+
+Par la suite, on construit une matrice avec les utilisateurs et les films. Plus précisement on utilise TruncatedSVD. On pourra utiliser les vecteurs latents pour prédire la note d'un film.
 
 ---
 
